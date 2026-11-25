@@ -80,10 +80,13 @@ def _service(key: str, raw: object, where: str) -> Service:
 
 
 def resolve(services: dict[str, Service], query: str) -> Service | None:
-    """Find a service by key or alias, else by a hostname or URL matching its domains."""
+    """Find a service by key, then alias or display name, else by the most specific domain matching a hostname or URL."""
     q = query.strip().lower()
     for service in services.values():
-        if q == service.key.lower() or q in service.aliases:
+        if q == service.key.lower():
+            return service
+    for service in services.values():
+        if q in service.aliases or q == service.name.lower():
             return service
     try:
         host = urlparse(q).hostname if "://" in q else q.split("/")[0].split(":")[0]
@@ -91,10 +94,13 @@ def resolve(services: dict[str, Service], query: str) -> Service | None:
         return None
     if not host:
         return None
-    for service in services.values():
-        if any(host == d or host.endswith("." + d) for d in service.domains):
-            return service
-    return None
+    matches = [
+        (len(d), service)
+        for service in services.values()
+        for d in service.domains
+        if host == d or host.endswith("." + d)
+    ]
+    return max(matches, key=lambda m: m[0])[1] if matches else None
 
 
 def suggest(services: dict[str, Service], query: str, n: int = 3) -> list[str]:

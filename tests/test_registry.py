@@ -104,3 +104,28 @@ def test_non_utf8_config_file(tmp_path):
 
 def test_resolve_malformed_url_returns_none():
     assert resolve(load_registry(), "http://[::1") is None
+
+
+def _user(tmp_path, body):
+    p = tmp_path / "s.toml"
+    p.write_text(body)
+    return load_registry(p)
+
+
+def test_user_key_beats_builtin_alias(tmp_path):
+    reg = _user(tmp_path, '[services.docker]\nprovider = "statuspage"\nurl = "https://s.example"\n')
+    assert resolve(reg, "docker").key == "docker"
+
+
+def test_most_specific_domain_wins(tmp_path):
+    reg = _user(
+        tmp_path,
+        '[services.mycorp]\nprovider = "statuspage"\nurl = "https://s.example"\ndomains = ["mycorp.atlassian.net"]\n',
+    )
+    assert resolve(reg, "mycorp.atlassian.net").key == "mycorp"
+    assert resolve(reg, "x.mycorp.atlassian.net").key == "mycorp"
+    assert resolve(reg, "other.atlassian.net").key == "jira"
+
+
+def test_resolve_by_display_name():
+    assert resolve(load_registry(), "Google Cloud").key == "gcp"
