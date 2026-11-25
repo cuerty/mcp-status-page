@@ -76,6 +76,9 @@ def test_fixed_provider_ignores_url(tmp_path):
         ("services = 1", "'services' must be a table"),
         ("services.x = 1", "services.x: must be a table"),
         ("[services", "invalid TOML"),
+        ('[services.x]\nprovider = ["statuspage"]\nurl = "https://a.b"', "services.x.provider: expected one of"),
+        ('[services.x]\nprovider = "statuspage"\nurl = "http://[abc"', "services.x.url: expected an http(s) URL"),
+        ('[services.x]\nprovider = "statuspage"\nurl = "https://a.b"\naliases = [1]', "services.x.aliases: expected a list of strings"),
     ],
 )
 def test_config_errors_name_file_and_field(tmp_path, body, message):
@@ -90,3 +93,14 @@ def test_config_errors_name_file_and_field(tmp_path, body, message):
 def test_missing_config_file(tmp_path):
     with pytest.raises(ConfigError, match="cannot read file"):
         load_registry(tmp_path / "absent.toml")
+
+
+def test_non_utf8_config_file(tmp_path):
+    cfg = tmp_path / "bad.toml"
+    cfg.write_bytes(b"\xff\xfe\x00bad")
+    with pytest.raises(ConfigError, match="not UTF-8 text"):
+        load_registry(cfg)
+
+
+def test_resolve_malformed_url_returns_none():
+    assert resolve(load_registry(), "http://[::1") is None

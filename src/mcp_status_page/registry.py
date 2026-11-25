@@ -33,13 +33,16 @@ def load_registry(user_config: str | Path | None = None) -> dict[str, Service]:
     builtin = files("mcp_status_page").joinpath("services.toml").read_text(encoding="utf-8")
     services = _parse(tomllib.loads(builtin), "built-in services.toml")
     if user_config:
-        path = Path(user_config).expanduser()
+        path = Path(user_config)
         try:
+            path = path.expanduser()
             data = tomllib.loads(path.read_text(encoding="utf-8"))
-        except OSError as exc:
-            raise ConfigError(f"{path}: cannot read file ({exc.strerror})") from exc
+        except (OSError, RuntimeError) as exc:
+            raise ConfigError(f"{path}: cannot read file ({getattr(exc, 'strerror', None) or exc})") from exc
         except tomllib.TOMLDecodeError as exc:
             raise ConfigError(f"{path}: invalid TOML ({exc})") from exc
+        except UnicodeDecodeError as exc:
+            raise ConfigError(f"{path}: not UTF-8 text ({exc.reason})") from exc
         services |= _parse(data, str(path))
     return services
 
@@ -55,10 +58,13 @@ def _service(key: str, raw: object, where: str) -> Service:
     if not isinstance(raw, dict):
         raise ConfigError(f"{where}: must be a table")
     provider = raw.get("provider")
-    if provider not in PROVIDERS:
+    if not isinstance(provider, str) or provider not in PROVIDERS:
         raise ConfigError(f"{where}.provider: expected one of {', '.join(sorted(PROVIDERS))}, got {provider!r}")
     url = FIXED_URLS.get(provider) or raw.get("url")
-    parsed = urlparse(url) if isinstance(url, str) else None
+    try:
+        parsed = urlparse(url) if isinstance(url, str) else None
+    except ValueError:
+        parsed = None
     if parsed is None or parsed.scheme not in ("http", "https") or not parsed.netloc:
         raise ConfigError(f"{where}.url: expected an http(s) URL, got {url!r}")
     name = raw.get("name", key)
@@ -79,7 +85,10 @@ def resolve(services: dict[str, Service], query: str) -> Service | None:
     for service in services.values():
         if q == service.key.lower() or q in service.aliases:
             return service
-    host = urlparse(q).hostname if "://" in q else q.split("/")[0].split(":")[0]
+    try:
+        host = urlparse(q).hostname if "://" in q else q.split("/")[0].split(":")[0]
+    except ValueError:
+        return None
     if not host:
         return None
     for service in services.values():
