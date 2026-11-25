@@ -27,7 +27,7 @@ async def test_azure_item_is_degraded_incident():
     assert incident.started_at.isoformat() == "2026-11-25T14:30:00+00:00"
     assert s.summary == "Degraded: Azure Front Door - Connectivity issues in West Europe (1 incident)"
     assert s.filtered("west europe").level is Level.DEGRADED
-    assert s.filtered("east us").level is Level.OPERATIONAL
+    assert s.filtered("east us").level is Level.DEGRADED  # no component data: never filtered out
 
 
 async def test_azure_empty_feed_is_operational():

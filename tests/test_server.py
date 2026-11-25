@@ -92,3 +92,17 @@ def test_cli_rejects_bad_config(tmp_path, capsys):
         main(["--config", str(bad)])
     assert exc.value.code == 2
     assert "config error" in capsys.readouterr().err
+
+
+async def test_check_services_empty_list_checks_all(client):
+    result = await client.call_tool("check_services", {"services": []})
+    assert result.structured_content["checked"] == 4
+
+
+async def test_non_http_adapter_error_is_unknown():
+    reg = {"odd": Service(key="odd", provider="statuspage", url="https://odd.example", name="Odd")}
+    transport = httpx.MockTransport(lambda r: httpx.Response(200, json={"unexpected": True}))
+    async with httpx.AsyncClient(transport=transport) as http, Client(build_server(reg, client=http)) as c:
+        data = (await c.call_tool("get_status", {"service": "odd"})).structured_content
+    assert data["level"] == "unknown"
+    assert data["error"].startswith("KeyError")

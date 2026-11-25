@@ -9,6 +9,7 @@ from enum import StrEnum
 from pydantic import BaseModel, computed_field, field_validator
 
 MAX_UPDATE_CHARS = 500
+MAX_TITLE_CHARS = 200
 MAX_COMPONENTS = 25
 MAINTENANCE_HORIZON = timedelta(hours=24)
 
@@ -70,6 +71,13 @@ class Incident(BaseModel):
     def _truncate(cls, value: str | None) -> str | None:
         if value and len(value) > MAX_UPDATE_CHARS:
             return value[: MAX_UPDATE_CHARS - 1] + "…"
+        return value
+
+    @field_validator("title")
+    @classmethod
+    def _truncate_title(cls, value: str) -> str:
+        if len(value) > MAX_TITLE_CHARS:
+            return value[: MAX_TITLE_CHARS - 1] + "…"
         return value
 
 
@@ -163,8 +171,8 @@ class ServiceStatus(BaseModel):
         return self.model_copy(
             update={
                 "components": [c for c in self.components if hit(c.name, c.group)],
-                "incidents": [i for i in self.incidents if hit(i.title, *i.components)],
-                "maintenance": [m for m in self.maintenance if hit(m.title, *m.components)],
+                "incidents": [i for i in self.incidents if hit(i.title, *i.components) or not i.components],
+                "maintenance": [m for m in self.maintenance if hit(m.title, *m.components) or not m.components],
             }
         )
 

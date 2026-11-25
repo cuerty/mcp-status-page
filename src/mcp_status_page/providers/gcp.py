@@ -20,6 +20,8 @@ async def fetch(client: httpx.AsyncClient, service: Service) -> ServiceStatus:
 
 
 def parse(data: list[dict], service: Service) -> ServiceStatus:
+    if not isinstance(data, list):
+        raise ValueError("gcp feed is not a list")
     components: list[Component] = []
     incidents: list[Incident] = []
     for raw in data:

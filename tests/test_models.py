@@ -122,3 +122,16 @@ def test_parse_dt_assumes_utc_for_naive_and_keeps_offsets():
     assert parse_dt("2026-11-25T10:00:00") == datetime(2026, 11, 25, 10, tzinfo=UTC)
     assert parse_dt("2026-11-25T10:00:00Z") == datetime(2026, 11, 25, 10, tzinfo=UTC)
     assert parse_dt("2026-11-25T08:00:00-08:00").utcoffset() == timedelta(hours=-8)
+
+
+def test_filtered_keeps_incidents_without_component_data():
+    s = make(incidents=[Incident(title="Elevated errors", level=Level.PARTIAL_OUTAGE, components=[])])
+    f = s.filtered("anything")
+    assert len(f.incidents) == 1
+    assert f.level is Level.PARTIAL_OUTAGE
+
+
+def test_incident_title_truncated():
+    i = Incident(title="t" * 500, level=Level.DEGRADED)
+    assert len(i.title) == 200
+    assert i.title.endswith("…")

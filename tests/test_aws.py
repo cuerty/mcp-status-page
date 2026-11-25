@@ -44,3 +44,17 @@ async def test_output_cap():
 def test_event_without_status_raises():
     with pytest.raises(KeyError):
         aws.parse([{"arn": "arn:aws:health:us-east-1::event/x"}], SERVICE)
+
+
+def test_non_list_feed_raises():
+    with pytest.raises(ValueError, match="aws feed is not a list"):
+        aws.parse({}, SERVICE)
+
+
+async def test_empty_body_means_operational():
+    import httpx
+
+    transport = httpx.MockTransport(lambda r: httpx.Response(200, content=b"  \n"))
+    async with httpx.AsyncClient(transport=transport) as client:
+        s = await aws.fetch(client, SERVICE)
+    assert s.level is Level.OPERATIONAL

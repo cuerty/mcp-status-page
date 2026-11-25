@@ -102,7 +102,7 @@ def build_server(
         )
     )
     async def check_services(services: list[str] | None = None) -> CheckResult:
-        targets = list(registry.values()) if services is None else [lookup(name) for name in services]
+        targets = list(registry.values()) if not services else [lookup(name) for name in services]
         unique = list({s.key: s for s in targets}.values())
         results = await asyncio.gather(*(status_of(s) for s in unique))
         problems = [r.capped() for r in results if r.level is not Level.OPERATIONAL]

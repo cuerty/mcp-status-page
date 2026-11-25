@@ -16,7 +16,8 @@ STATUS = {"0": Level.OPERATIONAL, "1": Level.DEGRADED, "2": Level.PARTIAL_OUTAGE
 async def fetch(client: httpx.AsyncClient, service: Service) -> ServiceStatus:
     response = await client.get(FEED)
     response.raise_for_status()
-    return parse(json.loads(response.content), service)  # json.loads detects UTF-16 from the bytes
+    body = response.content.strip()  # AWS may send an empty body when nothing is active
+    return parse(json.loads(body) if body else [], service)  # json.loads detects UTF-16 from the bytes
 
 
 def _level(code: object) -> Level:
@@ -28,6 +29,8 @@ def _ts(value: object) -> datetime | None:
 
 
 def parse(events: list[dict], service: Service) -> ServiceStatus:
+    if not isinstance(events, list):
+        raise ValueError("aws feed is not a list")
     components: list[Component] = []
     incidents: list[Incident] = []
     for event in events:

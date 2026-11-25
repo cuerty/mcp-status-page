@@ -28,3 +28,10 @@ async def test_filter_by_product_and_region():
     s = await get_status()
     assert [c.name for c in s.filtered("cloud run").components] == ["Cloud Run"]
     assert s.filtered("us-central1").level is Level.OPERATIONAL
+
+
+def test_non_list_feed_raises():
+    import pytest
+
+    with pytest.raises(ValueError, match="gcp feed is not a list"):
+        gcp.parse({}, SERVICE)
