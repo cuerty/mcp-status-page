@@ -1,6 +1,6 @@
 name: Release
 
-# Publish a GitHub Release with tag vX.Y.Z (matching pyproject.toml) to ship X.Y.Z to PyPI.
+# Publish a GitHub Release with tag vX.Y.Z to ship X.Y.Z to PyPI. No need to bump pyproject.toml.
 # PyPI side: trusted publisher for this repo, workflow release.yml, environment "pypi".
 on:
   release:
@@ -17,14 +17,11 @@ jobs:
         with:
           persist-credentials: false
       - uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
-      - name: Tag matches package version
+      - name: Set package version from release tag
         env:
           TAG: ${{ github.event.release.tag_name }}
-        run: |
-          version=$(uv version --short)
-          if [ "$TAG" != "v$version" ]; then
-            echo "::error::release tag $TAG does not match pyproject version v$version"; exit 1
-          fi
+        # The tag is the source of truth: v0.2.0 publishes 0.2.0. uv rejects non-PEP 440 versions.
+        run: uv version --no-sync "${TAG#v}"
       - run: uv run --locked pytest -q
       - run: uv run --locked pytest -m live -q
       - run: uv build
