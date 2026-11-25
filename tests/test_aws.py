@@ -1,3 +1,4 @@
+import pytest
 from helpers import mock_client
 
 from mcp_status_page.models import Level, Service
@@ -38,3 +39,8 @@ async def test_output_cap():
     s = (await get_status()).capped()
     assert len(s.components) == 25
     assert s.more_components == 254
+
+
+def test_event_without_status_raises():
+    with pytest.raises(KeyError):
+        aws.parse([{"arn": "arn:aws:health:us-east-1::event/x"}], SERVICE)

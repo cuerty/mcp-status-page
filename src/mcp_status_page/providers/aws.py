@@ -31,7 +31,7 @@ def parse(events: list[dict], service: Service) -> ServiceStatus:
     components: list[Component] = []
     incidents: list[Incident] = []
     for event in events:
-        level = _level(event.get("status"))
+        level = _level(event["status"])
         if level is Level.OPERATIONAL:
             continue
         arn = event.get("arn", "").split(":")

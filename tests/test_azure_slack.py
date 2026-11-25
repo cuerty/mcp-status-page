@@ -1,3 +1,4 @@
+import pytest
 from helpers import mock_client
 
 from mcp_status_page.models import Level, Service
@@ -53,3 +54,13 @@ async def test_slack_incidents_merge_component_levels():
 async def test_slack_ok_is_operational():
     s = await slack_status("slack_ok.json")
     assert s.level is Level.OPERATIONAL
+
+
+def test_slack_schema_change_raises():
+    with pytest.raises(KeyError):
+        slack.parse({"status": "ok"}, SLACK)
+
+
+def test_azure_non_rss_raises():
+    with pytest.raises(ValueError):
+        azure.parse(b"<feed xmlns='http://www.w3.org/2005/Atom'></feed>", AZURE)

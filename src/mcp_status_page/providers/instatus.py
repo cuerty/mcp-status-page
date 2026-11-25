@@ -22,7 +22,8 @@ async def fetch(client: httpx.AsyncClient, service: Service) -> ServiceStatus:
 
 
 def parse(summary: dict, components: dict, service: Service) -> ServiceStatus:
-    raw = components.get("components") or []
+    summary["page"]  # required; healthy pages omit activeIncidents, so only `page` proves the schema
+    raw = components["components"]
     affected: dict[str, list[str]] = {}
     for c in raw:
         for item in [*(c.get("activeIncidents") or []), *(c.get("activeMaintenances") or [])]:

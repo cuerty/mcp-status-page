@@ -56,3 +56,8 @@ async def test_http_error_raises():
     async with mock_client({}) as client:
         with pytest.raises(httpx.HTTPStatusError):
             await statuspage.fetch(client, service)
+
+
+def test_missing_incidents_key_raises():
+    with pytest.raises(KeyError):
+        statuspage.parse({"components": []}, Service(key="x", provider="statuspage", url="https://a.b", name="X"))

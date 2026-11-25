@@ -18,7 +18,7 @@ async def fetch(client: httpx.AsyncClient, service: Service) -> ServiceStatus:
 def parse(data: dict, service: Service) -> ServiceStatus:
     components: list[Component] = []
     incidents: list[Incident] = []
-    for raw in data.get("active_incidents") or []:
+    for raw in data["active_incidents"]:
         level = TYPE_LEVEL.get(raw.get("type"), Level.DEGRADED)
         names = raw.get("services") or []
         notes = raw.get("notes") or []

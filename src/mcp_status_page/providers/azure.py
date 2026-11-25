@@ -21,7 +21,10 @@ async def fetch(client: httpx.AsyncClient, service: Service) -> ServiceStatus:
 
 def parse(xml: bytes, service: Service) -> ServiceStatus:
     incidents = []
-    for item in ElementTree.fromstring(xml).iter("item"):
+    root = ElementTree.fromstring(xml)
+    if root.find("channel") is None:
+        raise ValueError("Azure feed has no RSS <channel>")
+    for item in root.iter("item"):
         published = item.findtext("pubDate")
         text = " ".join(_TAG.sub(" ", item.findtext("description") or "").split())
         incidents.append(

@@ -1,3 +1,4 @@
+import pytest
 from helpers import mock_client
 
 from mcp_status_page.models import Level, Service
@@ -26,3 +27,17 @@ async def test_incidents_components_and_maintenance():
     assert [(m.title, m.level) for m in s.maintenance] == [("Testing maintenance notifications", Level.MAINTENANCE)]
     assert s.level is Level.PARTIAL_OUTAGE
     assert s.summary == "Partial outage: Website, App (2 incidents)"
+
+
+def test_healthy_page_without_incident_keys_is_operational():
+    service = Service(key="demo", provider="instatus", url=URL, name="Demo")
+    s = instatus.parse({"page": {"name": "x", "status": "UP"}}, {"components": []}, service)
+    assert s.level.value == "operational"
+
+
+def test_instatus_schema_change_raises():
+    service = Service(key="demo", provider="instatus", url=URL, name="Demo")
+    with pytest.raises(KeyError):
+        instatus.parse({"page": {}}, {"items": []}, service)
+    with pytest.raises(KeyError):
+        instatus.parse({}, {"components": []}, service)
