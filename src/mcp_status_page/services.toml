@@ -1,0 +1,185 @@
+# Built-in services. User config files use the same format; a user entry with
+# the same key replaces the built-in one completely.
+# `domains` match the host itself and any subdomain (github.com matches api.github.com).
+# aws, azure, gcp and slack have fixed endpoints and need no url.
+
+[services.github]
+provider = "statuspage"
+name = "GitHub"
+url = "https://www.githubstatus.com"
+aliases = ["gh"]
+domains = ["github.com", "githubusercontent.com", "ghcr.io", "github.io", "githubassets.com"]
+
+[services.cloudflare]
+provider = "statuspage"
+name = "Cloudflare"
+url = "https://www.cloudflarestatus.com"
+aliases = ["cf"]
+domains = ["cloudflare.com", "workers.dev", "pages.dev", "cloudflarestorage.com"]
+
+[services.anthropic]
+provider = "statuspage"
+name = "Anthropic (Claude)"
+url = "https://status.claude.com"
+aliases = ["claude"]
+domains = ["anthropic.com", "claude.ai", "claude.com"]
+
+[services.openai]
+provider = "incidentio"
+name = "OpenAI"
+url = "https://status.openai.com"
+aliases = ["chatgpt"]
+domains = ["openai.com", "chatgpt.com"]
+
+[services.jira]
+provider = "statuspage"
+name = "Jira"
+url = "https://jira-software.status.atlassian.com"
+domains = ["atlassian.net"]
+
+[services.confluence]
+provider = "statuspage"
+name = "Confluence"
+url = "https://confluence.status.atlassian.com"
+
+[services.bitbucket]
+provider = "statuspage"
+name = "Bitbucket"
+url = "https://bitbucket.status.atlassian.com"
+domains = ["bitbucket.org"]
+
+[services.npm]
+provider = "statuspage"
+name = "npm"
+url = "https://status.npmjs.org"
+domains = ["npmjs.org", "npmjs.com"]
+
+[services.pypi]
+provider = "statuspage"
+name = "PyPI (Python infrastructure)"
+url = "https://status.python.org"
+aliases = ["python"]
+domains = ["pypi.org", "pythonhosted.org", "python.org"]
+
+[services.dockerhub]
+provider = "incidentio"
+name = "Docker"
+url = "https://www.dockerstatus.com"
+aliases = ["docker"]
+domains = ["docker.com", "docker.io"]
+
+[services.vercel]
+provider = "statuspage"
+name = "Vercel"
+url = "https://www.vercel-status.com"
+domains = ["vercel.com", "vercel.app"]
+
+[services.netlify]
+provider = "statuspage"
+name = "Netlify"
+url = "https://www.netlifystatus.com"
+domains = ["netlify.com", "netlify.app"]
+
+[services.digitalocean]
+provider = "statuspage"
+name = "DigitalOcean"
+url = "https://status.digitalocean.com"
+aliases = ["do"]
+domains = ["digitalocean.com", "digitaloceanspaces.com", "ondigitalocean.app"]
+
+[services.circleci]
+provider = "statuspage"
+name = "CircleCI"
+url = "https://status.circleci.com"
+domains = ["circleci.com"]
+
+[services.twilio]
+provider = "statuspage"
+name = "Twilio"
+url = "https://status.twilio.com"
+domains = ["twilio.com"]
+
+[services.discord]
+provider = "statuspage"
+name = "Discord"
+url = "https://discordstatus.com"
+domains = ["discord.com", "discord.gg", "discordapp.com"]
+
+[services.sentry]
+provider = "statuspage"
+name = "Sentry"
+url = "https://status.sentry.io"
+domains = ["sentry.io"]
+
+[services.render]
+provider = "statuspage"
+name = "Render"
+url = "https://status.render.com"
+domains = ["render.com", "onrender.com"]
+
+[services.mongodb]
+provider = "statuspage"
+name = "MongoDB Atlas"
+url = "https://status.mongodb.com"
+aliases = ["atlas"]
+domains = ["mongodb.com", "mongodb.net"]
+
+[services.figma]
+provider = "statuspage"
+name = "Figma"
+url = "https://status.figma.com"
+domains = ["figma.com"]
+
+[services.zoom]
+provider = "statuspage"
+name = "Zoom"
+url = "https://status.zoom.us"
+domains = ["zoom.us"]
+
+[services.linear]
+provider = "incidentio"
+name = "Linear"
+url = "https://linearstatus.com"
+domains = ["linear.app"]
+
+[services.supabase]
+provider = "incidentio"
+name = "Supabase"
+url = "https://status.supabase.com"
+domains = ["supabase.co", "supabase.com"]
+
+[services.flyio]
+provider = "incidentio"
+name = "Fly.io"
+url = "https://status.flyio.net"
+aliases = ["fly"]
+domains = ["fly.io", "fly.dev"]
+
+[services.hashicorp]
+provider = "incidentio"
+name = "HashiCorp"
+url = "https://status.hashicorp.com"
+aliases = ["terraform"]
+domains = ["hashicorp.com", "terraform.io"]
+
+[services.aws]
+provider = "aws"
+name = "AWS"
+aliases = ["amazon"]
+domains = ["amazonaws.com", "aws.amazon.com", "cloudfront.net"]
+
+[services.azure]
+provider = "azure"
+name = "Microsoft Azure"
+domains = ["azure.com", "azure.net", "windows.net", "azurewebsites.net"]
+
+[services.gcp]
+provider = "gcp"
+name = "Google Cloud"
+aliases = ["google-cloud", "gcloud"]
+domains = ["googleapis.com", "cloud.google.com", "appspot.com", "run.app"]
+
+[services.slack]
+provider = "slack"
+name = "Slack"
+domains = ["slack.com"]
