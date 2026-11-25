@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:a10="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>Azure Status</title>
+    <link>https://azure.status.microsoft/en-us/status/</link>
+    <description>Azure Status</description>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 25 Nov 2026 16:25:00 Z</lastBuildDate>
+    <item>
+      <guid isPermaLink="false">TEST-123</guid>
+      <link>https://azure.status.microsoft/en-us/status/</link>
+      <title>Azure Front Door - Connectivity issues in West Europe</title>
+      <description>&lt;p&gt;Starting at 14:10 UTC customers may experience &lt;b&gt;timeouts&lt;/b&gt; when connecting to resources.&lt;/p&gt;</description>
+      <pubDate>Wed, 25 Nov 2026 14:30:00 Z</pubDate>
+    </item>
+  </channel>
+</rss>
