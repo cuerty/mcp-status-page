@@ -2,7 +2,7 @@
 
 An MCP server that checks the public status pages of common developer services, so your agent can tell when a failing API call, build or deploy is caused by an upstream outage and not by your code.
 
-It reads GitHub, AWS, Azure, Google Cloud, Cloudflare, OpenAI, Anthropic, npm, PyPI, Docker, Vercel, Slack and about 20 more. You can add any Statuspage, incident.io or Instatus page.
+It reads GitHub, AWS, Azure, Google Cloud, Cloudflare, OpenAI, Anthropic, npm, PyPI, Docker, Vercel, Slack and 17 more. You can add any Statuspage, incident.io or Instatus page.
 
 ## Install
 
@@ -28,6 +28,8 @@ To run one shared instance over HTTP (Streamable HTTP):
 uvx mcp-status-page --transport http --host 0.0.0.0 --port 8000
 ```
 
+The HTTP transport has no authentication; bind it to a private network.
+
 ## Tools
 
 | Tool | What it does |
@@ -51,7 +53,7 @@ aliases = ["myco"]                 # optional
 domains = ["mycompany.com"]        # optional; also matches subdomains
 ```
 
-An entry with the same key as a built-in service replaces it. The built-in list is in [`src/mcp_status_page/services.toml`](src/mcp_status_page/services.toml).
+An entry with the same key as a built-in service replaces it. The built-in list is in [`src/mcp_status_page/services.toml`](https://github.com/cuerty/mcp-status-page/blob/main/src/mcp_status_page/services.toml).
 
 ## Options
 

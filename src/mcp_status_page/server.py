@@ -88,7 +88,8 @@ def build_server(
             "Get the current status of one service: overall level, non-operational components, active "
             "incidents and maintenance. `service` accepts a name, alias, hostname or URL. `component` "
             "narrows the result to matching components, regions or incidents (e.g. 'actions', 's3', "
-            f"'us-east-1'). {WHEN}"
+            f"'us-east-1'). An empty result for `component` means no reported problem matches that term; "
+            f"it does not confirm the component exists. {WHEN}"
         )
     )
     async def get_status(service: str, component: str | None = None) -> ServiceStatus:
@@ -98,7 +99,9 @@ def build_server(
     @mcp.tool(
         description=(
             "Check several services at once (all known services when `services` is omitted) and return "
-            f"only those that are not operational, including ones whose status page could not be read. {WHEN}"
+            f"only those that are not operational, including ones whose status page could not be read. "
+            "When you know which services the failing code depends on, pass them; omitting `services` "
+            f"checks all of them. {WHEN}"
         )
     )
     async def check_services(services: list[str] | None = None) -> CheckResult:
