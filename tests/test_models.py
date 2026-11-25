@@ -1,6 +1,6 @@
 from datetime import UTC, datetime, timedelta
 
-from mcp_status_page.models import Component, Incident, Level, Service, ServiceStatus, worst
+from mcp_status_page.models import Component, Incident, Level, Service, ServiceStatus, parse_dt, worst
 
 SVC = Service(key="demo", provider="statuspage", url="https://status.example.com", name="Demo")
 NOW = datetime(2026, 11, 25, 12, tzinfo=UTC)
@@ -114,3 +114,11 @@ def test_dump_includes_computed_fields():
     data = make(error="boom").model_dump(mode="json")
     assert data["level"] == "unknown"
     assert data["summary"] == "Status unknown: boom"
+
+
+def test_parse_dt_assumes_utc_for_naive_and_keeps_offsets():
+    assert parse_dt(None) is None
+    assert parse_dt("") is None
+    assert parse_dt("2026-11-25T10:00:00") == datetime(2026, 11, 25, 10, tzinfo=UTC)
+    assert parse_dt("2026-11-25T10:00:00Z") == datetime(2026, 11, 25, 10, tzinfo=UTC)
+    assert parse_dt("2026-11-25T08:00:00-08:00").utcoffset() == timedelta(hours=-8)

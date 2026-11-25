@@ -16,7 +16,7 @@ dependencies = [
 mcp-status-page = "mcp_status_page.server:main"
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
 [dependency-groups]

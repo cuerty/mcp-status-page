@@ -32,7 +32,10 @@ def worst(levels: Iterable[Level]) -> Level:
 
 
 def parse_dt(value: str | None) -> datetime | None:
-    return datetime.fromisoformat(value) if value else None
+    if not value:
+        return None
+    parsed = datetime.fromisoformat(value)
+    return parsed if parsed.tzinfo else parsed.replace(tzinfo=UTC)
 
 
 class Service(BaseModel):
