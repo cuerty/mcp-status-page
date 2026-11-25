@@ -58,6 +58,12 @@ async def test_http_error_raises():
             await statuspage.fetch(client, service)
 
 
-def test_missing_incidents_key_raises():
+def test_healthy_incidentio_page_without_incidents_key_is_operational():
+    service = Service(key="x", provider="incidentio", url="https://a.b", name="X")
+    data = {"page": {}, "status": {"indicator": "none"}, "components": [{"id": "1", "name": "API", "status": "operational"}]}
+    assert statuspage.parse(data, service).level is Level.OPERATIONAL
+
+
+def test_missing_components_key_raises():
     with pytest.raises(KeyError):
-        statuspage.parse({"components": []}, Service(key="x", provider="statuspage", url="https://a.b", name="X"))
+        statuspage.parse({"incidents": []}, Service(key="x", provider="statuspage", url="https://a.b", name="X"))

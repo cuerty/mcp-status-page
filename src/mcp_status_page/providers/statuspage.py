@@ -42,8 +42,9 @@ def parse(data: dict, service: Service) -> ServiceStatus:
         for c in raw
         if not c.get("group")  # group rows only aggregate their children
     ]
+    # incident.io omits "incidents" when there are none; "components" (required above) proves the schema
     incidents = [
-        _incident(i, IMPACT_LEVEL.get(i.get("impact"), Level.DEGRADED)) for i in data["incidents"]
+        _incident(i, IMPACT_LEVEL.get(i.get("impact"), Level.DEGRADED)) for i in data.get("incidents") or []
     ]
     maintenance = [
         _incident(m, Level.MAINTENANCE if m.get("status") in IN_PROGRESS else Level.OPERATIONAL)
